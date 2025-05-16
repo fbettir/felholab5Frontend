@@ -6,6 +6,7 @@
 </div>
 
 <div class="g_id_signin"
+      *ngIf="!isLoggedIn"
       data-type="standard"
       data-shape="pill"
       data-theme="filled_blue"
@@ -13,4 +14,8 @@
       data-size="large"
       data-logo_alignment="left">
 </div>  
+
+<button *ngIf="isLoggedIn">
+      loggedin
+</button>
 
