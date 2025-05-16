@@ -13,7 +13,10 @@ export class LoginComponent {
   isLoggedIn: boolean = false;
 
   constructor(private storageService: LocalStorageService){
-
+    console.log("login constructor: " + this.isLoggedIn )
+    if(this.storageService.getUser() != null ){
+      this.isLoggedIn = true;
+    }
   }
 
   onInit(){

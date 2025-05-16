@@ -2,11 +2,14 @@
      data-client_id="146243868267-n40i568t8hmufauoj6tc28klp8fr42oh.apps.googleusercontent.com"
      data-context="signin"
      [attr.data-login_uri]="environment.loginRedirectURi"
-     data-itp_support="true">
+     data-itp_support="true"
+           *ngIf="!isLoggedIn"
+
+     >
+
 </div>
 
 <div class="g_id_signin"
-      *ngIf="!isLoggedIn"
       data-type="standard"
       data-shape="pill"
       data-theme="filled_blue"
