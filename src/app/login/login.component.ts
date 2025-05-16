@@ -17,6 +17,7 @@ export class LoginComponent {
   }
 
   onInit(){
+    console.log("login oninit: " + this.isLoggedIn )
     if(this.storageService.getUser() != null ){
       this.isLoggedIn = true;
     }
