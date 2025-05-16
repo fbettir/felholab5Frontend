@@ -14,11 +14,11 @@ export class AppComponent {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const token = params['token'];
-      console.log('Received token:', token);
+      console.log('Appcomponent - Received token:', token);
       if(token != undefined)
         this.authService.setAccessToken(token)
       const user = params['user'];
-      console.log('Recived user:',user)
+      console.log('Appcomponent - Recived user:',user)
       if(user != undefined)
         this.authService.setSub(user)
       //this.router.navigate([], { queryParams: {} });
