@@ -1,27 +1,35 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
+import { from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
+  const auth = inject(AuthService);
 
-  constructor(private authService: AuthService) {}
+  // Ha az URL már teljes, ne módosítsd
+  const isFullUrl = req.url.startsWith('http://') || req.url.startsWith('https://');
+  const isApiCall = req.url.startsWith('/api');
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const accessToken = this.authService.getAccessToken();
-    
-    if (request.url.includes('/api/login')) {
-      return next.handle(request);
-    }
-    if (accessToken) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-    }
-
-    return next.handle(request);
+  if (!isApiCall && !isFullUrl) {
+    return next(req); // nem API és nem teljes URL, pl. /assets vagy /uploads
   }
-}
+
+  return from(auth.getAccessTokenSilently()).pipe(
+switchMap(token => {
+  console.log('➡️ Kapott token az interceptorban:', token); // <--- IDE
+
+  const url = isApiCall ? `${environment.apiUrl}${req.url}` : req.url;
+
+  const apiReq = req.clone({
+    url,
+    setHeaders: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return next(apiReq);
+})
+  );
+} 
